@@ -7,18 +7,28 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+final class ViewController: UIViewController {
 
-    @IBOutlet weak var countTouchLabel: UILabel!
-    @IBOutlet weak var historyTextView: UITextView!
+    @IBOutlet private weak var countTouchLabel: UILabel!
+    @IBOutlet private weak var historyTextView: UITextView!
     
     private var count = 0
     
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return formatter
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setupInitialState()
+    }
+    
+    private func setupInitialState() {
         countTouchLabel.text = "Значение счётчика: \(count)"
         historyTextView.text = "История изменений:\n"
+        historyTextView.isEditable = false
     }
     
     @IBAction func incrementCounter(_ sender: UIButton) {
@@ -48,15 +58,11 @@ class ViewController: UIViewController {
       }
     
     private func updateHistory(with changeDescription: String) {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        let timestampString = dateFormatter.string(from: Date.now)
-        
-        let newEntry = "[\(timestampString)] : \(changeDescription)\n"
-        
-        historyTextView.text += newEntry
-        scrollToBottom()
-    }
+         let timestampString = dateFormatter.string(from: .now)
+         let newEntry = "[\(timestampString)] : \(changeDescription)\n"
+         historyTextView.text += newEntry
+         scrollToBottom()
+     }
     
     private func scrollToBottom() {
         let bottom = NSRange(location: historyTextView.text.count - 1, length: 1)
